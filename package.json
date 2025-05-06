@@ -2,10 +2,9 @@
   "name": "birthday-widget",
   "version": "1.0.0",
   "type": "module",
-  "description": "Birthday greeting widget with snapshot",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "node node_modules/puppeteer/install.js"
   },
   "dependencies": {
     "express": "^4.18.2",

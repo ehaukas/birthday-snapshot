@@ -71,9 +71,9 @@
       loadCSV().then(data => {
         const today = getTodayBirthdays(data);
         renderGreetings(today);
-        window.__birthdayWidgetReady = true;
       });
     });
+
     async function loadCSV() {
       console.log("📁 Attempting to load CSV...");
       const response = await fetch('bursdager.csv');
@@ -81,6 +81,7 @@
       console.log("📄 Raw CSV:", text);
       return parseCSV(text);
     }
+
     function parseCSV(csvText) {
       const lines = csvText.trim().split('\n');
       const data = [];
@@ -93,6 +94,7 @@
       console.log("✅ Parsed CSV:", data);
       return data;
     }
+
     function calcAge(birthdate) {
       const [day, month, year] = birthdate.split('.').map(Number);
       const today = new Date();
@@ -100,6 +102,7 @@
       const hasHadBirthday = (today.getMonth() + 1 > month) || (today.getMonth() + 1 === month && today.getDate() >= day);
       return hasHadBirthday ? age : age - 1;
     }
+
     function getTodayBirthdays(data) {
       const today = new Date();
       const day = today.getDate().toString().padStart(2, '0');
@@ -111,6 +114,7 @@
         return d === day && m === month;
       });
     }
+
     function renderGreetings(list) {
       const container = document.getElementById('greetingText');
       const card = document.querySelector('.card');
@@ -122,40 +126,22 @@
         return;
       }
       card.classList.remove('no-bg');
-      if (list.length === 1) {
-        container.style.top = '42%';
-        container.style.transform = 'translateY(-50%)';
-      } else if (list.length === 2) {
-        container.style.top = '8%';
-        container.style.transform = 'none';
-      } else {
-        container.style.top = '4%';
-        container.style.transform = 'none';
-      }
+      container.style.top = list.length === 1 ? '42%' : list.length === 2 ? '8%' : '4%';
+      container.style.transform = list.length === 1 ? 'translateY(-50%)' : 'none';
       list.forEach(entry => {
         const age = calcAge(entry.birthdate);
         const p = document.createElement('p');
-        p.innerHTML = `
+        p.innerHTML = \`
           <span class="rate-value">Gratulerer med </span><br>
-          <span class="rate-label">${age}</span><span class="rate-value">-årsdagen,</span><br>
+          <span class="rate-label">\${age}</span><span class="rate-value">-årsdagen,</span><br>
           <div class="name-block">
-            <strong class="rate-value">${entry.first}</strong>
-            <span class="timestamp">[${entry.company}]</span>
+            <strong class="rate-value">\${entry.first}</strong>
+            <span class="timestamp">[\${entry.company}]</span>
           </div>
-        `;
+        \`;
         container.appendChild(p);
       });
-      let size;
-      const count = list.length;
-      if (count === 1) {
-        size = 5.0;
-      } else if (count === 2) {
-        size = 3.0;
-      } else if (count === 3) {
-        size = 2.3;
-      } else {
-        size = Math.max(1.2, 6.5 / count);
-      }
+      let size = list.length === 1 ? 5.0 : list.length === 2 ? 3.0 : list.length === 3 ? 2.3 : Math.max(1.2, 6.5 / list.length);
       container.style.fontSize = size + 'vw';
     }
   </script>
