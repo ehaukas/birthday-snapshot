@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=1548, height=1030">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gratulerer med dagen!</title>
   <style>
     body, html {
@@ -76,11 +76,12 @@
 
   <script>
     console.log("🎉 Script loaded");
+
     document.addEventListener('DOMContentLoaded', () => {
       loadCSV().then(data => {
         const today = getTodayBirthdays(data);
         renderGreetings(today);
-        window.__birthdayWidgetReady = true;
+        window.__birthdayWidgetReady = true; // 🟢 Ready for snapshot
         console.log("✅ Birthday widget is ready");
       });
     });
@@ -128,10 +129,11 @@
       });
     }
 
-function renderGreetings(list) {
+    function renderGreetings(list) {
       const container = document.getElementById('greetingText');
       const card = document.querySelector('.card');
       container.innerHTML = '';
+
       console.log(`📋 Birthdays found today: ${list.length}`);
 
       if (list.length === 0) {
@@ -142,16 +144,8 @@ function renderGreetings(list) {
 
       card.classList.remove('no-bg');
 
-      if (list.length === 1) {
-        container.style.top = '42%';
-        container.style.transform = 'translateY(-50%)';
-      } else if (list.length === 2) {
-        container.style.top = '12%';
-        container.style.transform = 'none';
-      } else {
-        container.style.top = '4%';
-        container.style.transform = 'none';
-      }
+      container.style.top = list.length === 1 ? '42%' : list.length === 2 ? '8%' : '4%';
+      container.style.transform = list.length === 1 ? 'translateY(-50%)' : 'none';
 
       list.forEach(entry => {
         const age = calcAge(entry.birthdate);
@@ -167,22 +161,9 @@ function renderGreetings(list) {
         container.appendChild(p);
       });
 
-      let size;
       const count = list.length;
-      if (count === 1) {
-        size = 5.0;
-      } else if (count === 2) {
-        size = 3.0;
-      } else if (count === 3) {
-        size = 2.3;
-      } else {
-        size = Math.max(1.2, 6.5 / count);
-      }
+      let size = count === 1 ? 5.0 : count === 2 ? 3.0 : count === 3 ? 2.3 : Math.max(1.2, 6.5 / count);
       container.style.fontSize = size + 'vw';
-  setTimeout(() => {
-  document.title = '{"ready_for_cache": true}';
-  console.log("📦 Yodeck snapshot signal sent after DOM settled.");
-}, 2000);
     }
   </script>
 </body>
