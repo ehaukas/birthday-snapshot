@@ -1,0 +1,13 @@
+{
+  "name": "birthday-snapshot",
+  "version": "1.0.0",
+  "description": "Birthday greeting screenshot tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "puppeteer": "^20.7.4"
+  }
+}
