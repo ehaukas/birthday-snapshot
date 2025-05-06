@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=1548, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gratulerer med dagen!</title>
   <style>
     body, html {
@@ -19,8 +19,8 @@
     }
     .card {
       position: relative;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       background-image: url('cake-v2.png');
       background-size: cover;
       background-position: center;
@@ -40,7 +40,12 @@
     .rate-label { color: #2F549A; font-weight: bold; }
     .rate-value { color: rgba(47, 84, 154, 0.72); }
     .timestamp { font-size: 0.7em; color: #7F8C8D; margin-left: 0; line-height: 1.1; }
-    .name-block { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+    .name-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
     p { margin: 0 0 1em 0; }
   </style>
 </head>
@@ -49,6 +54,7 @@
     <div id="greetingText"></div>
   </div>
   <script>
+    window.__birthdayWidgetReady = false;
     document.addEventListener('DOMContentLoaded', () => {
       loadCSV().then(data => {
         const today = getTodayBirthdays(data);
@@ -93,35 +99,27 @@
       container.innerHTML = '';
       if (list.length === 0) {
         card.classList.add('no-bg');
+        window.__birthdayWidgetReady = true;
         return;
       }
       card.classList.remove('no-bg');
-      if (list.length === 1) {
-        container.style.top = '42%';
-        container.style.transform = 'translateY(-50%)';
-      } else if (list.length === 2) {
-        container.style.top = '10%';
-        container.style.transform = 'none';
-      } else {
-        container.style.top = '4%';
-        container.style.transform = 'none';
-      }
+      container.style.top = list.length === 1 ? '42%' : list.length === 2 ? '8%' : '4%';
+      container.style.transform = list.length === 1 ? 'translateY(-50%)' : 'none';
       list.forEach(entry => {
         const age = calcAge(entry.birthdate);
         const p = document.createElement('p');
-        p.innerHTML = `
+        p.innerHTML = \`
           <span class="rate-value">Gratulerer med </span><br>
-          <span class="rate-label">${age}</span><span class="rate-value">-årsdagen,</span><br>
+          <span class="rate-label">\${age}</span><span class="rate-value">-årsdagen,</span><br>
           <div class="name-block">
-            <strong class="rate-value">${entry.first}</strong>
-            <span class="timestamp">[${entry.company}]</span>
-          </div>
-        `;
+            <strong class="rate-value">\${entry.first}</strong>
+            <span class="timestamp">[\${entry.company}]</span>
+          </div>\`;
         container.appendChild(p);
       });
-      const count = list.length;
-      const size = count === 1 ? 5.0 : count === 2 ? 3.0 : count === 3 ? 2.3 : Math.max(1.2, 6.5 / count);
+      let size = list.length === 1 ? 5.0 : list.length === 2 ? 3.0 : list.length === 3 ? 2.3 : Math.max(1.2, 6.5 / list.length);
       container.style.fontSize = size + 'vw';
+      window.__birthdayWidgetReady = true;
     }
   </script>
 </body>

@@ -1,4 +1,3 @@
-
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -20,11 +19,9 @@ app.get('/snapshot', async (req, res) => {
   });
   const page = await browser.newPage();
   await page.setViewport({ width: 1548, height: 1030 });
-
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle0' });
-
+  await page.waitForFunction('window.__birthdayWidgetReady === true', { timeout: 10000 });
   await page.screenshot({ path: path.join(__dirname, 'public', 'latest.png') });
-
   await browser.close();
   res.send('✅ Screenshot taken and saved as latest.png');
 });
