@@ -2,7 +2,7 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=1548, height=1030">
   <title>Gratulerer med dagen!</title>
   <style>
     body, html {
@@ -17,6 +17,7 @@
       align-items: center;
       justify-content: center;
     }
+
     .card {
       position: relative;
       width: 100vw;
@@ -25,10 +26,12 @@
       background-size: cover;
       background-position: center;
     }
+
     .card.no-bg {
       background-image: none !important;
       background-color: white !important;
     }
+
     #greetingText {
       position: absolute;
       left: 55%;
@@ -37,25 +40,30 @@
       font-size: 2.4vw;
       line-height: 1.5;
     }
+
     .rate-label {
       color: #2F549A;
       font-weight: bold;
     }
+
     .rate-value {
       color: rgba(47, 84, 154, 0.72);
     }
+
     .timestamp {
       font-size: 0.7em;
       color: #7F8C8D;
       margin-left: 0;
       line-height: 1.1;
     }
+
     .name-block {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       text-align: left;
     }
+
     p {
       margin: 0 0 1em 0;
     }
@@ -65,12 +73,15 @@
   <div class="card">
     <div id="greetingText"></div>
   </div>
+
   <script>
     console.log("🎉 Script loaded");
     document.addEventListener('DOMContentLoaded', () => {
       loadCSV().then(data => {
         const today = getTodayBirthdays(data);
         renderGreetings(today);
+        window.__birthdayWidgetReady = true;
+        console.log("✅ Birthday widget is ready");
       });
     });
 
@@ -99,7 +110,8 @@
       const [day, month, year] = birthdate.split('.').map(Number);
       const today = new Date();
       let age = today.getFullYear() - year;
-      const hasHadBirthday = (today.getMonth() + 1 > month) || (today.getMonth() + 1 === month && today.getDate() >= day);
+      const hasHadBirthday = (today.getMonth() + 1 > month) ||
+        (today.getMonth() + 1 === month && today.getDate() >= day);
       return hasHadBirthday ? age : age - 1;
     }
 
@@ -108,6 +120,7 @@
       const day = today.getDate().toString().padStart(2, '0');
       const month = (today.getMonth() + 1).toString().padStart(2, '0');
       console.log("📅 Today is:", day, month);
+
       return data.filter(entry => {
         const [d, m] = entry.birthdate.split('.').map(x => x.trim().padStart(2, '0'));
         console.log("🔍 Checking entry:", entry.first, entry.birthdate, "→", d, m);
@@ -119,29 +132,53 @@
       const container = document.getElementById('greetingText');
       const card = document.querySelector('.card');
       container.innerHTML = '';
+
       console.log(`📋 Birthdays found today: ${list.length}`);
+
       if (list.length === 0) {
         card.classList.add('no-bg');
         console.log("🎨 No birthdays today — background image removed.");
         return;
       }
+
       card.classList.remove('no-bg');
-      container.style.top = list.length === 1 ? '42%' : list.length === 2 ? '8%' : '4%';
-      container.style.transform = list.length === 1 ? 'translateY(-50%)' : 'none';
+
+      if (list.length === 1) {
+        container.style.top = '42%';
+        container.style.transform = 'translateY(-50%)';
+      } else if (list.length === 2) {
+        container.style.top = '8%';
+        container.style.transform = 'none';
+      } else {
+        container.style.top = '4%';
+        container.style.transform = 'none';
+      }
+
       list.forEach(entry => {
         const age = calcAge(entry.birthdate);
         const p = document.createElement('p');
-        p.innerHTML = \`
+        p.innerHTML = `
           <span class="rate-value">Gratulerer med </span><br>
           <span class="rate-label">\${age}</span><span class="rate-value">-årsdagen,</span><br>
           <div class="name-block">
             <strong class="rate-value">\${entry.first}</strong>
             <span class="timestamp">[\${entry.company}]</span>
           </div>
-        \`;
+        `;
         container.appendChild(p);
       });
-      let size = list.length === 1 ? 5.0 : list.length === 2 ? 3.0 : list.length === 3 ? 2.3 : Math.max(1.2, 6.5 / list.length);
+
+      let size;
+      const count = list.length;
+      if (count === 1) {
+        size = 5.0;
+      } else if (count === 2) {
+        size = 3.0;
+      } else if (count === 3) {
+        size = 2.3;
+      } else {
+        size = Math.max(1.2, 6.5 / count);
+      }
       container.style.fontSize = size + 'vw';
     }
   </script>
