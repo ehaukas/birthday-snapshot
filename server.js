@@ -10,8 +10,10 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Snapshot route
 app.get('/snapshot', async (req, res) => {
   const browser = await puppeteer.launch({
     headless: 'new',
@@ -20,12 +22,16 @@ app.get('/snapshot', async (req, res) => {
   const page = await browser.newPage();
   await page.setViewport({ width: 1548, height: 1030 });
   await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle0' });
-  await page.waitForFunction('window.__birthdayWidgetReady === true', { timeout: 10000 });
+
+  // Wait until birthday rendering is confirmed
+  await page.waitForFunction('window.__birthdayWidgetReady === true', { timeout: 8000 });
+
   await page.screenshot({ path: path.join(__dirname, 'public', 'latest.png') });
   await browser.close();
-  res.send('✅ Screenshot taken and saved as latest.png');
+  res.send('✅ Snapshot complete');
 });
 
+// Root route
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
