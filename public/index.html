@@ -128,11 +128,10 @@
       });
     }
 
-    function renderGreetings(list) {
+function renderGreetings(list) {
       const container = document.getElementById('greetingText');
       const card = document.querySelector('.card');
       container.innerHTML = '';
-
       console.log(`📋 Birthdays found today: ${list.length}`);
 
       if (list.length === 0) {
@@ -159,10 +158,10 @@
         const p = document.createElement('p');
         p.innerHTML = `
           <span class="rate-value">Gratulerer med </span><br>
-          <span class="rate-label">\${age}</span><span class="rate-value">-årsdagen,</span><br>
+          <span class="rate-label">${age}</span><span class="rate-value">-årsdagen,</span><br>
           <div class="name-block">
-            <strong class="rate-value">\${entry.first}</strong>
-            <span class="timestamp">[\${entry.company}]</span>
+            <strong class="rate-value">${entry.first}</strong>
+            <span class="timestamp">[${entry.company}]</span>
           </div>
         `;
         container.appendChild(p);
