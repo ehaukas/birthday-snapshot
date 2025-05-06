@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="no">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gratulerer med dagen!</title>
   <style>
     body, html {
@@ -50,13 +50,11 @@
     <div id="greetingText"></div>
   </div>
   <script>
-    console.log("🎉 Script loaded");
     document.addEventListener('DOMContentLoaded', () => {
       loadCSV().then(data => {
         const today = getTodayBirthdays(data);
         renderGreetings(today);
         window.__birthdayWidgetReady = true;
-        console.log("✅ Birthday widget is ready");
       });
     });
     async function loadCSV() {
@@ -80,7 +78,7 @@
       const today = new Date();
       let age = today.getFullYear() - year;
       const hasHadBirthday = (today.getMonth() + 1 > month) ||
-        (today.getMonth() + 1 === month && today.getDate() >= day);
+            (today.getMonth() + 1 === month && today.getDate() >= day);
       return hasHadBirthday ? age : age - 1;
     }
     function getTodayBirthdays(data) {

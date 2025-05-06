@@ -3,7 +3,7 @@
   "name": "birthday-widget",
   "version": "1.0.0",
   "description": "Birthday greeting widget with snapshot",
-  "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
