@@ -146,7 +146,7 @@ function renderGreetings(list) {
         container.style.top = '42%';
         container.style.transform = 'translateY(-50%)';
       } else if (list.length === 2) {
-        container.style.top = '8%';
+        container.style.top = '10%';
         container.style.transform = 'none';
       } else {
         container.style.top = '4%';
@@ -179,6 +179,10 @@ function renderGreetings(list) {
         size = Math.max(1.2, 6.5 / count);
       }
       container.style.fontSize = size + 'vw';
+  setTimeout(() => {
+  document.title = '{"ready_for_cache": true}';
+  console.log("📦 Yodeck snapshot signal sent after DOM settled.");
+}, 2000);
     }
   </script>
 </body>
