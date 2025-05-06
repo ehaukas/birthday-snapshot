@@ -1,3 +1,4 @@
-#!/bin/bash
+
+#!/usr/bin/env bash
+echo "Installing dependencies..."
 npm install
-node node_modules/puppeteer/install.js

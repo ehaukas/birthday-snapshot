@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="no">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=1548, initial-scale=1.0">
   <title>Gratulerer med dagen!</title>
   <style>
     body, html {
@@ -20,8 +19,8 @@
     }
     .card {
       position: relative;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       background-image: url('cake-v2.png');
       background-size: cover;
       background-position: center;
@@ -54,7 +53,6 @@
       loadCSV().then(data => {
         const today = getTodayBirthdays(data);
         renderGreetings(today);
-        window.__birthdayWidgetReady = true;
       });
     });
     async function loadCSV() {
@@ -77,8 +75,7 @@
       const [day, month, year] = birthdate.split('.').map(Number);
       const today = new Date();
       let age = today.getFullYear() - year;
-      const hasHadBirthday = (today.getMonth() + 1 > month) ||
-            (today.getMonth() + 1 === month && today.getDate() >= day);
+      const hasHadBirthday = (today.getMonth() + 1 > month) || (today.getMonth() + 1 === month && today.getDate() >= day);
       return hasHadBirthday ? age : age - 1;
     }
     function getTodayBirthdays(data) {
@@ -122,12 +119,8 @@
         `;
         container.appendChild(p);
       });
-      let size;
       const count = list.length;
-      if (count === 1) size = 5.0;
-      else if (count === 2) size = 3.0;
-      else if (count === 3) size = 2.3;
-      else size = Math.max(1.2, 6.5 / count);
+      const size = count === 1 ? 5.0 : count === 2 ? 3.0 : count === 3 ? 2.3 : Math.max(1.2, 6.5 / count);
       container.style.fontSize = size + 'vw';
     }
   </script>
