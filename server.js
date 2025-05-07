@@ -33,7 +33,7 @@ app.get('/snapshot', async (req, res) => {
 
   // Wait for card to exist and give rendering time
   await page.waitForSelector('.card');
-  await page.waitForTimeout(1000);
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   // Force white background inline
   await page.evaluate(() => {
