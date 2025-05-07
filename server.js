@@ -2,24 +2,26 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer';
-import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
-// Serve static files (HTML, CSS, JS, CSV, images)
+// Serve static files from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Screenshot route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.get('/snapshot', async (req, res) => {
   console.log('📸 Snapshot route called...');
 
   const browser = await puppeteer.launch({
     headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
 
   const page = await browser.newPage();
@@ -29,37 +31,37 @@ app.get('/snapshot', async (req, res) => {
   console.log(`🌐 Loading page: ${targetUrl}`);
   await page.goto(targetUrl, { waitUntil: 'networkidle0' });
 
-  // Force background to white
+  // Wait for card to exist and give rendering time
+  await page.waitForSelector('.card');
+  await page.waitForTimeout(1000);
+
+  // Force white background inline
   await page.evaluate(() => {
-    document.body.style.background = 'white';
-    document.documentElement.style.background = 'white';
+    const card = document.querySelector('.card');
+    if (card) {
+      card.style.backgroundColor = '#ffffff';
+    }
+    document.body.style.backgroundColor = '#ffffff';
+    document.documentElement.style.backgroundColor = '#ffffff';
   });
 
-  // Wait for .card element to be ready and clip it
-  const card = await page.$('.card');
-  if (!card) {
-    console.error('❌ Could not find .card element.');
-    await browser.close();
-    return res.status(500).send('Card element not found.');
+  const cardElement = await page.$('.card');
+  if (cardElement) {
+    await cardElement.screenshot({
+      path: path.join(__dirname, 'public', 'latest.png'),
+      omitBackground: false,
+    });
+    console.log('✅ Snapshot complete');
+    res.send('✅ Snapshot complete');
+  } else {
+    console.error('❌ .card element not found');
+    res.status(500).send('❌ Failed to find .card element for snapshot');
   }
 
-  const boundingBox = await card.boundingBox();
-  await page.screenshot({
-    path: path.join(__dirname, 'public', 'latest.png'),
-    clip: boundingBox
-  });
-
   await browser.close();
-  console.log('✅ Snapshot complete');
-  res.send('✅ Snapshot complete');
 });
 
-// Root route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Start server
+// Start the server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
