@@ -35,7 +35,10 @@ app.get('/snapshot', async (req, res) => {
   await page.waitForSelector('.card');
   await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // Force white background inline
+  // Tell Chromium to use light color scheme (fix dark bg issues in some environments)
+  await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }]);
+
+  // Force white background inline (extra guard)
   await page.evaluate(() => {
     const card = document.querySelector('.card');
     if (card) {
@@ -49,7 +52,7 @@ app.get('/snapshot', async (req, res) => {
   if (cardElement) {
     await cardElement.screenshot({
       path: path.join(__dirname, 'public', 'latest.png'),
-      omitBackground: false,
+      omitBackground: false, // keep background visible
     });
     console.log('✅ Snapshot complete');
     res.send('✅ Snapshot complete');
