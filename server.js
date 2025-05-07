@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer';
+import sharp from 'sharp';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,7 +10,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Serve static files from the public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
@@ -31,14 +31,9 @@ app.get('/snapshot', async (req, res) => {
   console.log(`🌐 Loading page: ${targetUrl}`);
   await page.goto(targetUrl, { waitUntil: 'networkidle0' });
 
-  // Wait for card to exist and give rendering time
   await page.waitForSelector('.card');
   await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // Tell Chromium to use light color scheme (fix dark bg issues in some environments)
-  await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }]);
-
-  // Force white background inline (extra guard)
   await page.evaluate(() => {
     const card = document.querySelector('.card');
     if (card) {
@@ -50,11 +45,25 @@ app.get('/snapshot', async (req, res) => {
 
   const cardElement = await page.$('.card');
   if (cardElement) {
+    const tempPath = path.join(__dirname, 'public', 'temp-snapshot.png');
+    const finalPath = path.join(__dirname, 'public', 'latest.png');
+
     await cardElement.screenshot({
-      path: path.join(__dirname, 'public', 'latest.png'),
-      omitBackground: false, // keep background visible
+      path: tempPath,
+      omitBackground: false,
     });
-    console.log('✅ Snapshot complete');
+
+    await sharp(tempPath)
+      .resize({
+        width: 1920,
+        height: 1080,
+        fit: 'contain',
+        position: 'left', // 👈 Align left
+        background: '#ffffff',
+      })
+      .toFile(finalPath);
+
+    console.log('✅ Snapshot created and padded as latest.png');
     res.send('✅ Snapshot complete');
   } else {
     console.error('❌ .card element not found');
@@ -64,7 +73,6 @@ app.get('/snapshot', async (req, res) => {
   await browser.close();
 });
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
