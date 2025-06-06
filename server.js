@@ -25,7 +25,7 @@ app.get('/snapshot', async (req, res) => {
   });
 
   const page = await browser.newPage();
-  await page.setViewport({ width: 1920, height: 1080 });
+  await page.setViewport({ width: 2400, height: 1220 });
 
   const targetUrl = `http://localhost:${PORT}/`;
   console.log(`🌐 Loading page: ${targetUrl}`);
@@ -55,8 +55,8 @@ app.get('/snapshot', async (req, res) => {
 
     await sharp(tempPath)
       .resize({
-        width: 1920,
-        height: 1080,
+        width: 2400,
+        height: 1220,
         fit: 'contain',
         position: 'left', // 👈 Align left
         background: '#ffffff',
