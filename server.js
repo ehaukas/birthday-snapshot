@@ -25,7 +25,7 @@ app.get('/snapshot', async (req, res) => {
   });
 
   const page = await browser.newPage();
-  await page.setViewport({ width: 1548, height: 1030 });
+  await page.setViewport({ width: 1920, height: 1080 });
 
   const targetUrl = `http://localhost:${PORT}/`;
   console.log(`🌐 Loading page: ${targetUrl}`);
